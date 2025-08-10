@@ -7,6 +7,7 @@ import (
 	"simple-forum/pkg/internalsql"
 
 	membershipRepo "simple-forum/internal/repository/membership"
+	membershipService "simple-forum/internal/service/membership"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql" // Import MySQL driver
@@ -38,11 +39,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error connecting to database: %v", err)
 	}
-	_ = membershipRepo.NewRepository(db)
 
-	membershipHandler := membership.NewHandler(r)
-
-	membershipHandler.PingRoutes()
-
+	// Initialize Repository
+	memberRepo := membershipRepo.NewRepository(db)
+	// Initialize Service
+	membershipSvc := membershipService.NewService(memberRepo)
+	// Initialize  Handler
+	membershipHandler := membership.NewHandler(r, membershipSvc)
+	// Set up routes
+	membershipHandler.RegisterRoutes()
 	r.Run(cfg.Service.Port)
 }
