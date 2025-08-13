@@ -2,12 +2,14 @@ package membership
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
 	"simple-forum/internal/model/membership"
+
+	"github.com/gin-gonic/gin"
 )
 
 type membershipSevice interface {
 	SignUp(ctx context.Context, req *membership.SignUpRequest) error
+	Login(ctx context.Context, req membership.LoginRequest) (string, error)
 }
 
 type Handler struct {
@@ -26,4 +28,5 @@ func (h *Handler) RegisterRoutes() {
 	r := h.engine.Group("/membership")
 	r.GET("/ping", h.Ping)
 	r.POST("/register", h.SignUp)
+	r.POST("/login", h.Login)
 }

@@ -2,6 +2,7 @@ package membership
 
 import (
 	"context"
+	"simple-forum/internal/configs"
 	"simple-forum/internal/model/membership"
 )
 
@@ -11,11 +12,13 @@ type membershipRepository interface {
 }
 
 type Service struct {
+	config         *configs.Config
 	membershipRepo membershipRepository
 }
 
-func NewService(membershipRepo membershipRepository) *Service {
+func NewService(cfg *configs.Config, membershipRepo membershipRepository) *Service {
 	return &Service{
+		config:         cfg,
 		membershipRepo: membershipRepo,
 	}
 }

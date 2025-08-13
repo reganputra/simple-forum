@@ -2,9 +2,10 @@ package membership
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"simple-forum/internal/model/membership"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) SignUp(c *gin.Context) {

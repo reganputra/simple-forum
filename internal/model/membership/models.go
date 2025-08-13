@@ -18,3 +18,12 @@ type UserModel struct {
 	CreatedBy string    `db:"created_by"`
 	UpdatedBy string    `db:"updated_by"`
 }
+
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type LoginResponse struct {
+	AccessToken string `json:"accessToken"`
+}
