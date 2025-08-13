@@ -43,7 +43,7 @@ func main() {
 	// Initialize Repository
 	memberRepo := membershipRepo.NewRepository(db)
 	// Initialize Service
-	membershipSvc := membershipService.NewService(memberRepo)
+	membershipSvc := membershipService.NewService(cfg, memberRepo)
 	// Initialize  Handler
 	membershipHandler := membership.NewHandler(r, membershipSvc)
 	// Set up routes
