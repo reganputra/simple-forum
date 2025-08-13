@@ -4,6 +4,9 @@ import (
 	"log"
 	"simple-forum/internal/configs"
 	"simple-forum/internal/handler/membership"
+	"simple-forum/internal/handler/posts"
+	postRepo "simple-forum/internal/repository/posts"
+	postSvc "simple-forum/internal/service/posts"
 	"simple-forum/pkg/internalsql"
 
 	membershipRepo "simple-forum/internal/repository/membership"
@@ -39,14 +42,20 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error connecting to database: %v", err)
 	}
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
 
 	// Initialize Repository
 	memberRepo := membershipRepo.NewRepository(db)
+	postRepository := postRepo.NewRepository(db)
 	// Initialize Service
 	membershipSvc := membershipService.NewService(cfg, memberRepo)
+	postService := postSvc.NewService(cfg, postRepository)
 	// Initialize  Handler
 	membershipHandler := membership.NewHandler(r, membershipSvc)
+	postHandler := posts.NewHandler(r, postService)
 	// Set up routes
 	membershipHandler.RegisterRoutes()
+	postHandler.PostRoutes()
 	r.Run(cfg.Service.Port)
 }
