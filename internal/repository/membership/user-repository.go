@@ -8,14 +8,22 @@ import (
 )
 
 func (r *repository) GetUser(ctx context.Context, email, username string) (*membership.UserModel, error) {
-	query := "SELECT id, email, username, created_at, updated_at, created_by, updated_by FROM users WHERE " +
+	query := "SELECT id, email, username, password, created_at, updated_at, created_by, updated_by FROM users WHERE " +
 		"email = ? OR username = ?"
 
 	row := r.db.QueryRowContext(ctx, query, email, username)
 	var user membership.UserModel
 
-	err := row.Scan(&user.Id, &user.Email, &user.Username, &user.CreatedAt, &user.UpdatedAt, &user.CreatedBy,
-		&user.UpdatedBy)
+	err := row.Scan(
+		&user.Id,
+		&user.Email,
+		&user.Username,
+		&user.Password, // <-- include password here
+		&user.CreatedAt,
+		&user.UpdatedAt,
+		&user.CreatedBy,
+		&user.UpdatedBy,
+	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
