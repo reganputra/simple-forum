@@ -10,6 +10,7 @@ import (
 
 type postService interface {
 	CreatePost(ctx context.Context, userId int64, req posts.CreatePostRequest) error
+	CreateComment(ctx context.Context, postId, userId int64, req posts.CreateCommentRequest) error
 }
 
 type Handler struct {
@@ -28,4 +29,5 @@ func (h *Handler) PostRoutes() {
 	r := h.engine.Group("/posts")
 	r.Use(middleware.AuthMiddleware())
 	r.POST("/create-post", h.CreatePost)
+	r.POST("/create-comment/:postId", h.CreateComment)
 }
