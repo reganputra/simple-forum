@@ -3,6 +3,7 @@ package posts
 import (
 	"context"
 	"simple-forum/internal/model/posts"
+	"strings"
 )
 
 func (r *Repository) CreatePost(ctx context.Context, model posts.PostModel) error {
@@ -15,4 +16,51 @@ func (r *Repository) CreatePost(ctx context.Context, model posts.PostModel) erro
 		return err
 	}
 	return nil
+}
+
+func (r *Repository) GetAllPost(ctx context.Context, limit, offset int) (posts.GetAllPostResponse, error) {
+
+	query := `
+        SELECT 
+            p.id, 
+            p.user_id, 
+            u.username, 
+            p.post_title, 
+            p.post_content, 
+            p.post_hashtags
+        FROM posts p
+        JOIN users u ON p.user_id = u.id
+        ORDER BY p.updated_at DESC
+        LIMIT ? OFFSET ?`
+
+	resp := posts.GetAllPostResponse{}
+	rows, err := r.db.QueryContext(ctx, query, limit, offset)
+	if err != nil {
+		return posts.GetAllPostResponse{}, err
+	}
+	defer rows.Close()
+
+	data := make([]posts.Post, 0)
+	for rows.Next() {
+		var model posts.PostModel
+		var username string
+		err = rows.Scan(&model.Id, &model.UserId, username, &model.PostTitle, &model.PostContent, &model.PostsHashtags)
+		if err != nil {
+			return resp, err
+		}
+		data = append(data, posts.Post{
+			Id:            model.Id,
+			UserId:        model.UserId,
+			Username:      username,
+			PostTitle:     model.PostTitle,
+			PostContent:   model.PostContent,
+			PostsHashtags: strings.Split(model.PostsHashtags, ","),
+		})
+	}
+	resp.Data = data
+	resp.Pagination = posts.Paginataion{
+		Limit:  limit,
+		Offset: offset,
+	}
+	return resp, nil
 }
