@@ -44,7 +44,7 @@ func (r *Repository) GetAllPost(ctx context.Context, limit, offset int) (posts.G
 	for rows.Next() {
 		var model posts.PostModel
 		var username string
-		err = rows.Scan(&model.Id, &model.UserId, username, &model.PostTitle, &model.PostContent, &model.PostsHashtags)
+		err = rows.Scan(&model.Id, &model.UserId, &username, &model.PostTitle, &model.PostContent, &model.PostsHashtags)
 		if err != nil {
 			return resp, err
 		}
