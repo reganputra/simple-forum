@@ -11,6 +11,7 @@ import (
 type postService interface {
 	CreatePost(ctx context.Context, userId int64, req posts.CreatePostRequest) error
 	CreateComment(ctx context.Context, postId, userId int64, req posts.CreateCommentRequest) error
+	UpsertUserActivity(ctx context.Context, postId, userId int64, req posts.UserActivityRequest) error
 }
 
 type Handler struct {
@@ -30,4 +31,5 @@ func (h *Handler) PostRoutes() {
 	r.Use(middleware.AuthMiddleware())
 	r.POST("/create-post", h.CreatePost)
 	r.POST("/create-comment/:postId", h.CreateComment)
+	r.PUT("/user-activity/:postId", h.UpsertUserActivity)
 }
